@@ -1,0 +1,1812 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediFind - Enhanced Medicine Finder</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Open+Sans:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --white: #FFFFFF;
+            --pale-bg: #F9FAFB;
+            --primary-blue: #1E88E5;
+            --primary-hover: #1976D2;
+            --accent-green: #43A047;
+            --accent-amber: #FB8C00;
+            --accent-red: #E53935;
+            --text-primary: #4A4A4A;
+            --text-secondary: #9E9E9E;
+            --border-color: #E0E0E0;
+            --footer-bg: #F1F3F5;
+            --shadow: 0 2px 6px rgba(0,0,0,0.08);
+            --tab-active: #E3F2FD;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 400;
+            color: var(--text-primary);
+            background-color: var(--pale-bg);
+            line-height: 1.6;
+        }
+        
+        h1, h2, h3, h4, h5 {
+            font-family: 'Nunito', sans-serif;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+        }
+        
+        h1 {
+            font-size: 30px;
+        }
+        
+        h2 {
+            font-size: 24px;
+        }
+        
+        p, span, div, li {
+            font-size: 16px;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 16px;
+        }
+        
+        /* Navigation */
+        nav {
+            background-color: var(--white);
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            padding: 16px 0;
+        }
+        
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .logo-icon {
+            color: var(--primary-blue);
+            font-size: 24px;
+        }
+        
+        .logo-text {
+            font-family: 'Nunito', sans-serif;
+            font-weight: 700;
+            font-size: 22px;
+            color: var(--text-primary);
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 24px;
+            align-items: center;
+        }
+        
+        .nav-link {
+            color: var(--text-primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 500;
+        }
+        
+        .nav-link:hover {
+            color: var(--primary-blue);
+        }
+        
+        /* Hero Section */
+        .hero {
+            padding: 40px 0;
+            background-color: var(--white);
+        }
+        
+        .hero-content {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .hero-title {
+            margin-bottom: 16px;
+        }
+        
+        .hero-subtitle {
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+            font-size: 18px;
+        }
+        
+        .search-form {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            justify-content: center;
+        }
+        
+        .input-group {
+            flex: 1;
+            min-width: 280px;
+            position: relative;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 16px 24px;
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            font-size: 16px;
+            font-family: 'Open Sans', sans-serif;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+        }
+        
+        .search-btn {
+            background-color: var(--primary-blue);
+            color: var(--white);
+            border: none;
+            border-radius: 24px;
+            padding: 16px 32px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .search-btn:hover {
+            background-color: var(--primary-hover);
+        }
+        
+        /* Tabs Section */
+        .tabs-section {
+            background-color: var(--white);
+            padding: 20px 0;
+            margin: 20px 0;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+        }
+        
+        .tabs-container {
+            display: flex;
+            overflow-x: auto;
+            gap: 8px;
+            padding: 0 16px;
+            scrollbar-width: none;
+        }
+        
+        .tabs-container::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .tab {
+            padding: 12px 24px;
+            border-radius: 24px;
+            background-color: var(--white);
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+            white-space: nowrap;
+            font-weight: 500;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .tab:hover {
+            border-color: var(--primary-blue);
+            color: var(--primary-blue);
+        }
+        
+        .tab.active {
+            background-color: var(--tab-active);
+            border-color: var(--primary-blue);
+            color: var(--primary-blue);
+            font-weight: 600;
+        }
+        
+        /* Content Sections */
+        .content-section {
+            background-color: var(--white);
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            margin-bottom: 24px;
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .view-all {
+            color: var(--primary-blue);
+            text-decoration: none;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .view-all:hover {
+            text-decoration: underline;
+        }
+        
+        /* Medicine Grid */
+        .medicine-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .medicine-card {
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 16px;
+            transition: all 0.3s;
+        }
+        
+        .medicine-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow);
+        }
+        
+        .medicine-name {
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-family: 'Nunito', sans-serif;
+        }
+        
+        .medicine-desc {
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-bottom: 12px;
+        }
+        
+        .medicine-price {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+        }
+        
+        .medicine-rating {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            color: var(--accent-amber);
+            margin-bottom: 16px;
+        }
+        
+        .pharmacy-logos {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+        
+        .pharmacy-badge {
+            background: #f0f0f0;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            display: inline-block;
+            margin: 2px;
+        }
+        
+        .btn {
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-blue);
+            color: var(--white);
+            border: none;
+            width: 100%;
+            justify-content: center;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+        }
+        
+        .btn-secondary {
+            background-color: transparent;
+            border: 1px solid var(--primary-blue);
+            color: var(--primary-blue);
+            width: 100%;
+            justify-content: center;
+            margin-top: 8px;
+        }
+        
+        .btn-secondary:hover {
+            background-color: var(--primary-blue);
+            color: var(--white);
+        }
+        
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-body {
+            padding: 20px;
+        }
+        
+        .availability-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+        
+        .stock-status.in-stock {
+            color: #4CAF50;
+            font-weight: bold;
+        }
+        
+        .stock-status.out-of-stock {
+            color: #f44336;
+            font-weight: bold;
+        }
+        
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #999;
+        }
+        
+        .close-btn:hover {
+            color: #333;
+        }
+        
+        .error-message {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #f44336;
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            z-index: 1000;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: var(--text-secondary);
+        }
+        
+        /* Disease Section */
+        .disease-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        
+        .disease-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+        }
+        
+        .disease-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .disease-trend {
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .trend-up {
+            background-color: rgba(229, 57, 53, 0.1);
+            color: var(--accent-red);
+        }
+        
+        .trend-down {
+            background-color: rgba(67, 160, 71, 0.1);
+            color: var(--accent-green);
+        }
+        
+        /* FAQ Section */
+        .faq-section {
+            background-color: var(--white);
+            padding: 40px 0;
+            margin: 40px 0;
+        }
+        
+        .faq-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+        
+        .faq-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .faq-item {
+            border-bottom: 1px solid var(--border-color);
+            padding: 20px 0;
+        }
+        
+        .faq-question {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            font-weight: 600;
+            font-family: 'Nunito', sans-serif;
+        }
+        
+        .faq-answer {
+            color: var(--text-secondary);
+            margin-top: 12px;
+            padding-right: 24px;
+            display: none;
+        }
+        
+        .faq-active .faq-answer {
+            display: block;
+        }
+        
+        .faq-icon {
+            transition: transform 0.3s;
+        }
+        
+        .faq-active .faq-icon {
+            transform: rotate(180deg);
+        }
+        
+        /* Footer */
+        footer {
+            background-color: var(--footer-bg);
+            padding: 40px 0;
+            margin-top: 60px;
+        }
+        
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 40px;
+        }
+        
+        .footer-brand {
+            flex: 1;
+            min-width: 250px;
+        }
+        
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        
+        .footer-text {
+            color: var(--text-secondary);
+            max-width: 300px;
+        }
+        
+        .footer-links {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .footer-heading {
+            font-size: 18px;
+            margin-bottom: 16px;
+        }
+        
+        .footer-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        
+        .footer-link:hover {
+            color: var(--primary-blue);
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 16px;
+            margin-top: 16px;
+        }
+        
+        .social-link {
+            color: var(--text-secondary);
+            font-size: 20px;
+            transition: color 0.2s;
+        }
+        
+        .social-link:hover {
+            color: var(--primary-blue);
+        }
+        
+        .footer-bottom {
+            margin-top: 40px;
+            text-align: center;
+            color: var(--text-secondary);
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .medicine-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .search-form {
+                flex-direction: column;
+            }
+            
+            .input-group {
+                min-width: 100%;
+            }
+            
+            .footer-content {
+                flex-direction: column;
+                gap: 30px;
+            }
+        }
+        
+        /* Focus states for accessibility */
+        button:focus,
+        input:focus,
+        select:focus {
+            outline: 2px solid var(--primary-blue);
+            outline-offset: 2px;
+        }
+        
+        /* Admin Panel Styles */
+        .admin-panel {
+            background-color: var(--white);
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            margin-bottom: 24px;
+        }
+        
+        .admin-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+        
+        .form-group {
+            margin-bottom: 16px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        
+        /* Alerts Section */
+        .alerts-container {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        
+        .alert-item {
+            padding: 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background-color: #FFF9C4;
+        }
+        
+        .alert-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        /* Reports Section */
+        .chart-container {
+            height: 300px;
+            margin: 20px 0;
+        }
+        
+        /* Pharmacy Links */
+        .pharmacy-link {
+            color: var(--primary-blue);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .pharmacy-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="container nav-container">
+            <div class="logo">
+                <i class="fas fa-pills logo-icon"></i>
+                <span class="logo-text">MediFind</span>
+            </div>
+            <div class="nav-links">
+                <a href="#" class="nav-link">
+                    <i class="fas fa-search"></i>
+                    <span>Search</span>
+                </a>
+                <a href="#" class="nav-link">
+                    <i class="fas fa-bell"></i>
+                    <span>Alerts</span>
+                </a>
+                <a href="#" class="nav-link">
+                    <i class="fas fa-user-md"></i>
+                    <span>Admin Portal</span>
+                </a>
+                <a href="#" class="nav-link">
+                    <i class="fas fa-user-circle"></i>
+                    <span>Login</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="hero-title">Find Medicine Prices & Availability</h1>
+                <p class="hero-subtitle">Compare prices and check stock at pharmacies near you</p>
+                <form class="search-form" id="main-search-form">
+                    <div class="input-group">
+                        <input type="text" class="search-input" placeholder="Enter medication name" id="medicine-search">
+                        <i class="fas fa-pill" style="position: absolute; right: 20px; top: 16px; color: #9E9E9E;"></i>
+                    </div>
+                    <div class="input-group">
+                        <input type="text" class="search-input" placeholder="Enter your location" id="location-search">
+                        <i class="fas fa-map-marker-alt" style="position: absolute; right: 20px; top: 16px; color: #9E9E9E;"></i>
+                    </div>
+                    <button type="submit" class="search-btn">Search</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tabs Section -->
+    <section class="tabs-section">
+        <div class="container">
+            <div class="tabs-container">
+                <div class="tab active" data-category="popular">
+                    <i class="fas fa-star"></i>
+                    <span>Popular Medicines</span>
+                </div>
+                <div class="tab" data-category="generic">
+                    <i class="fas fa-flask"></i>
+                    <span>Generic Medicines</span>
+                </div>
+                <div class="tab" data-category="branded">
+                    <i class="fas fa-tags"></i>
+                    <span>Branded Medicines</span>
+                </div>
+                <div class="tab" data-category="ayurvedic">
+                    <i class="fas fa-capsules"></i>
+                    <span>Ayurvedic</span>
+                </div>
+                <div class="tab" data-category="respiratory">
+                    <i class="fas fa-lungs-virus"></i>
+                    <span>Respiratory</span>
+                </div>
+                <div class="tab" data-category="cardiac">
+                    <i class="fas fa-heart"></i>
+                    <span>Cardiac Care</span>
+                </div>
+                <div class="tab" data-category="neuro">
+                    <i class="fas fa-brain"></i>
+                    <span>Neuro Care</span>
+                </div>
+                <div class="tab" data-category="antibiotics">
+                    <i class="fas fa-bacteria"></i>
+                    <span>Antibiotics</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Medicines Section -->
+    <section class="container">
+        <div class="content-section">
+            <div class="section-header">
+                <h2 id="medicine-category-title">Popular Medicines</h2>
+                <a href="#" class="view-all">
+                    <span>View All</span>
+                    <i class="fas fa-chevron-right"></i>
+                </a>
+            </div>
+            <div class="medicine-grid" id="medicine-container">
+                <div class="loading">Loading medicines...</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Disease Trends Section -->
+    <section class="container">
+        <div class="content-section">
+            <div class="section-header">
+                <h2>Current Disease Trends</h2>
+                <a href="#" class="view-all">
+                    <span>View All</span>
+                    <i class="fas fa-chevron-right"></i>
+                </a>
+            </div>
+            <div class="disease-list" id="disease-trends">
+                <div class="loading">Loading disease trends...</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Admin Portal Section -->
+    <section class="container">
+        <div class="admin-panel">
+            <div class="section-header">
+                <h2>Admin Portal - Manage Inventory</h2>
+            </div>
+            <form class="admin-form">
+                <div class="form-group">
+                    <label class="form-label">Medicine Name</label>
+                    <select class="form-input">
+                        <option>Dolo 650</option>
+                        <option>Azithral 500</option>
+                        <option>Pan-D</option>
+                        <option>Liv 52</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Pharmacy</label>
+                    <select class="form-input">
+                        <option>Apollo Pharmacy</option>
+                        <option>MedPlus</option>
+                        <option>Fortis Healthcare</option>
+                        <option>1mg</option>
+                        <option>PharmEasy</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Stock Quantity</label>
+                    <input type="number" class="form-input" placeholder="Enter quantity">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Price (₹)</label>
+                    <input type="number" class="form-input" placeholder="Enter price">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Status</label>
+                    <select class="form-input">
+                        <option>In Stock</option>
+                        <option>Out of Stock</option>
+                        <option>Low Stock</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <button type="button" class="btn btn-primary">Update Inventory</button>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <!-- Alerts Section -->
+    <section class="container">
+        <div class="content-section">
+            <div class="section-header">
+                <h2>Price & Availability Alerts</h2>
+            </div>
+            <div class="alerts-container">
+                <div class="alert-item">
+                    <div class="alert-title">Dolo 650 price drop at Apollo Pharmacy</div>
+                    <p>Price decreased from ₹50 to ₹45. <a href="#" class="pharmacy-link">View details</a></p>
+                </div>
+                <div class="alert-item">
+                    <div class="alert-title">Azithral 500 back in stock at MedPlus</div>
+                    <p>This medicine is now available. <a href="#" class="pharmacy-link">Check availability</a></p>
+                </div>
+                <div class="alert-item">
+                    <div class="alert-title">Set up new price alert</div>
+                    <p>Get notified when prices drop for your medicines. <a href="#" class="pharmacy-link">Create alert</a></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Reports Section -->
+    <section class="container">
+        <div class="content-section">
+            <div class="section-header">
+                <h2>Price Trends & Reports</h2>
+            </div>
+            <div class="chart-container">
+                <canvas id="priceChart"></canvas>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="faq-section">
+        <div class="container">
+            <div class="faq-header">
+                <h2>Frequently Asked Questions</h2>
+                <p>Find answers to common questions about our service</p>
+            </div>
+            <div class="faq-container">
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>How do I search for medicine prices?</span>
+                        <i class="fas fa-chevron-down faq-icon"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Simply type the name of your medication in the search bar at the top of the page. You can also filter by location to find prices at pharmacies near you.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>How often are prices updated?</span>
+                        <i class="fas fa-chevron-down faq-icon"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>We update our prices daily from partner pharmacies. However, for the most accurate and current pricing, we recommend contacting the pharmacy directly before visiting.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>Can I order medicines through MediFind?</span>
+                        <i class="fas fa-chevron-down faq-icon"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Currently, we provide price comparison and availability information. When you find a medicine you need, we'll direct you to the pharmacy's website or provide their contact information for ordering.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <div class="footer-logo">
+                        <i class="fas fa-pills" style="color: #1E88E5;"></i>
+                        <span style="font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 20px;">MediFind</span>
+                    </div>
+                    <p class="footer-text">Helping you find affordable medications and compare prices across pharmacies.</p>
+                    <div class="social-links">
+                        <a href="#" class="social-link"><i class="fab fa-facebook"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-linkedin"></i></a>
+                    </div>
+                </div>
+                
+                <div class="footer-links">
+                    <h4 class="footer-heading">Quick Links</h4>
+                    <a href="#" class="footer-link">Search Medications</a>
+                    <a href="#" class="footer-link">Price Alerts</a>
+                    <a href="#" class="footer-link">Pharmacy Directory</a>
+                    <a href="#" class="footer-link">Medicine Guide</a>
+                </div>
+                
+                <div class="footer-links">
+                    <h4 class="footer-heading">Partner Pharmacies</h4>
+                    <a href="https://www.1mg.com" target="_blank" class="footer-link">1mg</a>
+                    <a href="https://www.pharmeasy.com" target="_blank" class="footer-link">PharmEasy</a>
+                    <a href="https://www.apollopharmacy.in" target="_blank" class="footer-link">Apollo Pharmacy</a>
+                    <a href="https://www.medplus.com" target="_blank" class="footer-link">MedPlus</a>
+                </div>
+                
+                <div class="footer-links">
+                    <h4 class="footer-heading">Support</h4>
+                    <a href="#" class="footer-link">Help Center</a>
+                    <a href="#" class="footer-link">Contact Us</a>
+                    <a href="#" class="footer-link">FAQs</a>
+                    <a href="#" class="footer-link">Privacy Policy</a>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2023 MediFind. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        // Sample medicine data with at least 4 medicines in each category
+        const medicines = [
+            // Popular Medicines
+            {
+                id: 1,
+                name: 'Dolo 650',
+                description: 'Paracetamol Tablets',
+                price: 45.00,
+                category: ['popular'],
+                rating: 4.5,
+                reviews: 1200,
+                availability: 'in-stock',
+                pharmacies: ['Apollo', 'MedPlus', 'Fortis', '1mg', 'PharmEasy'],
+                composition: 'Paracetamol 650mg',
+                manufacturer: 'Micro Labs Ltd',
+                prescription_required: false
+            },
+            {
+                id: 2,
+                name: 'Azithral 500',
+                description: 'Azithromycin Tablets',
+                price: 120.00,
+                category: ['popular', 'antibiotics'],
+                rating: 4.8,
+                reviews: 890,
+                availability: 'in-stock',
+                pharmacies: ['Apollo', 'Fortis', '1mg', 'TrueMeds'],
+                composition: 'Azithromycin 500mg',
+                manufacturer: 'Alembic Pharmaceuticals',
+                prescription_required: true
+            },
+            {
+                id: 3,
+                name: 'Pan-D',
+                description: 'Pantoprazole & Domperidone',
+                price: 85.00,
+                category: ['popular'],
+                rating: 4.0,
+                reviews: 756,
+                availability: 'in-stock',
+                pharmacies: ['MedPlus', 'Fortis', 'PharmEasy', '1mg'],
+                composition: 'Pantoprazole 40mg + Domperidone 30mg',
+                manufacturer: 'Alkem Laboratories',
+                prescription_required: true
+            },
+            {
+                id: 4,
+                name: 'Liv 52',
+                description: 'Liver Care Formula',
+                price: 135.00,
+                category: ['popular', 'ayurvedic'],
+                rating: 4.7,
+                reviews: 1500,
+                availability: 'in-stock',
+                pharmacies: ['Apollo', 'MedPlus', '1mg', 'PharmEasy'],
+                composition: 'Herbal Formula',
+                manufacturer: 'Himalaya Drug Company',
+                prescription_required: false
+            },
+            
+            // Generic Medicines
+            {
+                id: 5,
+                name: 'Atorva 10',
+                description: 'Atorvastatin Tablets',
+                price: 95.00,
+                category: ['generic', 'cardiac'],
+                rating: 4.3,
+                reviews: 980,
+                availability: 'in-stock',
+                pharmacies: ['Apollo', 'MedPlus', '1mg'],
+                composition: 'Atorvastatin 10mg',
+                manufacturer: 'Zydus Cadila',
+                prescription_required: true
+            },
+            {
+                id: 6,
+                name: 'Met XL 25',
+                description: 'Metoprolol Succinate',
+                price: 65.00,
+                category: ['generic', 'cardiac'],
+                rating: 4.0,
+                reviews: 845,
+                availability: 'limited',
+                pharmacies: ['Fortis', 'PharmEasy'],
+                composition: 'Metoprolol Succinate 25mg',
+                manufacturer: 'Ajanta Pharma',
+                prescription_required: true
+            },
+            {
+                id: 7,
+                name: 'Ampodip 5',
+                description: 'Amlodipine Tablets',
+                price: 55.00,
+                category: ['generic', 'cardiac'],
+                rating: 4.2,
+                reviews: 920,
+                availability: 'in-stock',
+                pharmacies: ['Apollo', 'MedPlus', 'Fortis', '1mg'],
+                composition: 'Amlodipine 5mg',
+                manufacturer: 'Cipla Ltd',
+                prescription_required: true
+            },
+            {
+                id: 8,
+                name: 'Glycomet GP 1',
+                description: 'Metformin Tablets',
+                price: 75.00,
+                category: ['generic'],
+                rating: 4.1,
+                reviews: 1100,
+                availability: 'in-stock',
+                pharmacies: ['MedPlus', 'Fortis', '1mg', 'PharmEasy'],
+                composition: 'Metformin 1000mg',
+                manufacturer: 'USV Pvt Ltd',
+                prescription_required: true
+            },
+            
+            // Branded Medicines
+            {
+                id: 9,
+                name: 'Galvus Met',
+                description: 'Vildagliptin & Metformin',
+                price: 320.00,
+                category: ['branded'],
+                rating: 4.9,
+                reviews: 1100,
+                availability: 'in-stock',
+                pharmacies: ['Apollo', 'MedPlus', 'Fortis'],
+                composition: 'Vildagliptin 50mg + Metformin 500mg',
+                manufacturer: 'Novartis',
+                prescription_required: true
+            },
+            {
+                id: 10,
+                name: 'Januvia 100',
+                description: 'Sitagliptin Tablets',
+                price: 450.00,
+                category: ['branded'],
+                rating: 4.8,
+                reviews: 950,
+                availability: 'in-stock',
+                pharmacies: ['Apollo', 'MedPlus', '1mg'],
+                composition: 'Sitagliptin 100mg',
+                manufacturer: 'MSD Pharmaceuticals',
+                prescription_required: true
+            },
+            {
+                id: 11,
+                name: 'Lantus SoloStar',
+                description: 'Insulin Glargine Injection',
+                price: 1200.00,
+                category: ['branded'],
+                rating: 4.7,
+                reviews: 780,
+                availability: 'in-stock',
+                pharmacies: ['Apollo', 'Fortis', 'PharmEasy'],
+                composition: 'Insulin Glargine 100IU/ml',
+                manufacturer: 'Sanofi India',
+                prescription_required: true
+            },
+            {
+                id: 12,
+                name: 'Foracort 400',
+                description: 'Budesonide & Formoterol',
+                price: 380.00,
+                category: ['branded', 'respiratory'],
+                rating: 4.6,
+                reviews: 870,
+                availability: 'in-stock',
+                pharmacies: ['Apollo', 'MedPlus', '1mg', 'PharmEasy'],
+                composition: 'Budesonide 400mcg + Formoterol 6mcg',
+                manufacturer: 'Cipla Ltd',
+                prescription_required: true
+            },
+            
+            // Ayurvedic Medicines
+            {
+                id: 13,
+                name: 'Rumalaya Forte',
+                description: 'Joint Pain Relief',
+                price: 180.00,
+                category: ['ayurvedic'],
+                rating: 4.4,
+                reviews: 1250,
+                availability: 'in-stock',
+                pharmacies: ['MedPlus', '1mg', 'PharmEasy'],
+                composition: 'Herbal Formula',
+                manufacturer: 'Himalaya Drug Company',
+                prescription_required: false
+            },
+            {
+                id: 14,
+                name: 'Septilin',
+                description: 'Immunity Booster',
+                price: 150.00,
+                category: ['ayurvedic'],
+                rating: 4.5,
+                reviews: 980,
+                availability: 'in-stock',
+                pharmacies: ['Apollo', 'MedPlus', 'Fortis'],
+                composition: 'Herbal Formula',
+                manufacturer: 'Himalaya Drug Company',
+                prescription_required: false
+            },
+            {
+                id: 15,
+                name: 'Shankhapushpi',
+                description: 'Brain Tonic',
+                price: 120.00,
+                category: ['ayurvedic', 'neuro'],
+                rating: 4.2,
+                reviews: 760,
+                availability: 'in-stock',
+                pharmacies: ['MedPlus', '1mg', 'PharmEasy'],
+                composition: 'Convolvulus pluricaulis',
+                manufacturer: 'Baidyanath',
+                prescription_required: false
+            },
+            {
+                id: 16,
+                name: 'Triphala',
+                description: 'Digestive Support',
+                price: 95.00,
+                category: ['ayurvedic'],
+                rating: 4.7,
+                reviews: 2100,
+                availability: 'in-stock',
+                pharmacies: ['Apollo', 'MedPlus', 'Fortis', '1mg'],
+                composition: 'Amla, Bibhitaki, Haritaki',
+                manufacturer: 'Dabur India',
+                prescription_required: false
+            },
+            
+            // Respiratory Medicines
+            {
+                id: 17,
+                name: 'Duolin Inhaler',
+                description: 'Ipratropium & Levosalbutamol',
+                price: 320.00,
+                category: ['respiratory'],
+                rating: 4.6,
+                reviews: 890,
+                availability: 'in-stock',
+                pharmacies: ['Apollo', 'MedPlus', 'Fortis'],
+                composition: 'Ipratropium 20mcg + Levosalbutamol 50mcg',
+                manufacturer: 'Cipla Ltd',
+                prescription_required: true
+            },
+            {
+                id: 18,
+                name: 'Deriphyllin',
+                description: 'Etofylline & Theophylline',
+                price: 85.00,
+                category: ['respiratory'],
+                rating: 4.0,
+                reviews: 670,
+                availability: 'in-stock',
+                pharmacies: ['MedPlus', '1mg', 'PharmEasy'],
+                composition: 'Etofylline 77mg + Theophylline 23mg',
+                manufacturer: 'Zydus Cadila',
+                prescription_required: true
+            },
+            {
+                id: 19,
+                name: 'Montair LC',
+                description: 'Montelukast & Levocetirizine',
+                price: 145.00,
+                category: ['respiratory'],
+                rating: 4.3,
+                reviews: 920,
+                availability: 'in-stock',
+                pharmacies: ['Apollo', 'MedPlus', 'Fortis', '1mg'],
+                composition: 'Montelukast 10mg + Levocetirizine 5mg',
+                manufacturer: 'Cipla Ltd',
+                prescription_required: true
+            },
+            {
+                id: 20,
+                name: 'Ascoril Expectorant',
+                description: 'Cough Syrup',
+                price: 110.00,
+                category: ['respiratory'],
+                rating: 4.4,
+                reviews: 1500,
+                availability: 'in-stock',
+                pharmacies: ['Apollo', 'MedPlus', '1mg', 'PharmEasy'],
+                composition: 'Guaiphenesin, Bromhexine, Menthol',
+                manufacturer: 'Glenmark Pharmaceuticals',
+                prescription_required: false
+            },
+            
+            // Cardiac Care Medicines
+            {
+                id: 21,
+                name: 'Cardivas 3.125',
+                description: 'Carvedilol Tablets',
+                price: 75.00,
+                category: ['cardiac'],
+                rating: 4.5,
+                reviews: 680,
+                availability: 'in-stock',
+                pharmacies: ['Apollo', 'MedPlus', 'Fortis'],
+                composition: 'Carvedilol 3.125mg',
+                manufacturer: 'Sun Pharma',
+                prescription_required: true
+            },
+            {
+                id: 22,
+                name: 'Lasix 40',
+                description: 'Furosemide Tablets',
+                price: 55.00,
+                category: ['cardiac'],
+                rating: 4.2,
+                reviews: 590,
+                availability: 'in-stock',
+                pharmacies: ['MedPlus', '1mg', 'PharmEasy'],
+                composition: 'Furosemide 40mg',
+                manufacturer: 'Sanofi India',
+                prescription_required: true
+            },
+            {
+                id: 23,
+                name: 'Ecosprin 75',
+                description: 'Aspirin Tablets',
+                price: 40.00,
+                category: ['cardiac'],
+                rating: 4.7,
+                reviews: 2100,
+                availability: 'in-stock',
+                pharmacies: ['Apollo', 'MedPlus', 'Fortis', '1mg'],
+                composition: 'Aspirin 75mg',
+                manufacturer: 'USV Pvt Ltd',
+                prescription_required: true
+            },
+            {
+                id: 24,
+                name: 'Clopitab 75',
+                description: 'Clopidogrel Tablets',
+                price: 95.00,
+                category: ['cardiac'],
+                rating: 4.4,
+                reviews: 870,
+                availability: 'in-stock',
+                pharmacies: ['Apollo', 'MedPlus', '1mg', 'PharmEasy'],
+                composition: 'Clopidogrel 75mg',
+                manufacturer: 'Cipla Ltd',
+                prescription_required: true
+            },
+            
+            // Neuro Care Medicines
+            {
+                id: 25,
+                name: 'Pregabalin 75',
+                description: 'Neuropathic Pain Relief',
+                price: 220.00,
+                category: ['neuro'],
+                rating: 4.6,
+                reviews: 780,
+                availability: 'in-stock',
+                pharmacies: ['Apollo', 'MedPlus', 'Fortis', '1mg'],
+                composition: 'Pregabalin 75mg',
+                manufacturer: 'Sun Pharma',
+                prescription_required: true
+            },
+            {
+                id: 26,
+                name: 'Storvas 10',
+                description: 'Atorvastatin Tablets',
+                price: 105.00,
+                category: ['neuro'],
+                rating: 4.3,
+                reviews: 920,
+                availability: 'in-stock',
+                pharmacies: ['MedPlus', '1mg', 'PharmEasy', 'Fortis'],
+                composition: 'Atorvastatin 10mg',
+                manufacturer: 'Sun Pharma',
+                prescription_required: true
+            },
+            {
+                id: 27,
+                name: 'Eptoin 100',
+                description: 'Phenytoin Sodium',
+                price: 85.00,
+                category: ['neuro'],
+                rating: 4.1,
+                reviews: 540,
+                availability: 'in-stock',
+                pharmacies: ['Apollo', 'MedPlus', 'Fortis', '1mg'],
+                composition: 'Phenytoin Sodium 100mg',
+                manufacturer: 'Abbott',
+                prescription_required: true
+            },
+            {
+                id: 28,
+                name: 'Rivotril 0.5',
+                description: 'Clonazepam Tablets',
+                price: 120.00,
+                category: ['neuro'],
+                rating: 4.5,
+                reviews: 670,
+                availability: 'in-stock',
+                pharmacies: ['Apollo', 'MedPlus', '1mg', 'PharmEasy'],
+                composition: 'Clonazepam 0.5mg',
+                manufacturer: 'Roche',
+                prescription_required: true
+            },
+            
+            // Antibiotics
+            {
+                id: 29,
+                name: 'Moxikind CV 625',
+                description: 'Amoxicillin & Clavulanic Acid',
+                price: 180.00,
+                category: ['antibiotics'],
+                rating: 4.7,
+                reviews: 1450,
+                availability: 'in-stock',
+                pharmacies: ['Apollo', 'MedPlus', 'Fortis', '1mg'],
+                composition: 'Amoxicillin 500mg + Clavulanic Acid 125mg',
+                manufacturer: 'Mankind Pharma',
+                prescription_required: true
+            },
+            {
+                id: 30,
+                name: 'Cefakind 200',
+                description: 'Cefixime Tablets',
+                price: 150.00,
+                category: ['antibiotics'],
+                rating: 4.4,
+                reviews: 980,
+                availability: 'in-stock',
+                pharmacies: ['MedPlus', '1mg', 'PharmEasy' , 'Fortis'],
+                composition: 'Cefixime 200mg',
+                manufacturer: 'Mankind Pharma',
+                prescription_required: true
+            },
+            {
+                id: 31,
+                name: 'Ciprobid 500',
+                description: 'Ciprofloxacin Tablets',
+                price: 75.00,
+                category: ['antibiotics'],
+                rating: 4.2,
+                reviews: 870,
+                availability: 'in-stock',
+                pharmacies: ['Apollo', 'MedPlus', 'Fortis', '1mg'],
+                composition: 'Ciprofloxacin 500mg',
+                manufacturer: 'Zydus Cadila',
+                prescription_required: true
+            },
+            {
+                id: 32,
+                name: 'Zifi 200',
+                description: 'Cefixime Tablets',
+                price: 160.00,
+                category: ['antibiotics'],
+                rating: 4.5,
+                reviews: 1120,
+                availability: 'in-stock',
+                pharmacies: ['Apollo', 'MedPlus', '1mg', 'PharmEasy'],
+                composition: 'Cefixime 200mg',
+                manufacturer: 'FDC Limited',
+                prescription_required: true
+            }
+        ];
+
+        // Disease trends data
+        const diseaseTrends = [
+            { name: 'Seasonal Influenza', trend: 'up', percentage: 15 },
+            { name: 'Dengue', trend: 'up', percentage: 22 },
+            { name: 'COVID-19', trend: 'down', percentage: 8 },
+            { name: 'Typhoid', trend: 'up', percentage: 12 },
+            { name: 'Malaria', trend: 'down', percentage: 5 }
+        ];
+
+        // DOM elements
+        const tabs = document.querySelectorAll('.tab');
+        const medicineContainer = document.getElementById('medicine-container');
+        const categoryTitle = document.getElementById('medicine-category-title');
+        const diseaseTrendsContainer = document.getElementById('disease-trends');
+        const searchForm = document.getElementById('main-search-form');
+        const medicineSearch = document.getElementById('medicine-search');
+        const locationSearch = document.getElementById('location-search');
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            displayMedicines('popular');
+            displayDiseaseTrends();
+            setupEventListeners();
+            initializePriceChart();
+            setupFAQToggle();
+        });
+
+        // Set up event listeners
+        function setupEventListeners() {
+            // Tab switching
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const category = this.getAttribute('data-category');
+                    
+                    // Update active tab
+                    tabs.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Update category title
+                    categoryTitle.textContent = this.querySelector('span').textContent;
+                    
+                    // Display medicines for the selected category
+                    displayMedicines(category);
+                });
+            });
+            
+            // Search form submission
+            searchForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const searchTerm = medicineSearch.value.trim();
+                const location = locationSearch.value.trim();
+                
+                if (searchTerm) {
+                    searchMedicines(searchTerm, location);
+                }
+            });
+        }
+
+        // Display medicines by category
+        function displayMedicines(category) {
+            // Filter medicines by category
+            const filteredMedicines = medicines.filter(medicine => 
+                medicine.category.includes(category)
+            );
+            
+            // Clear the container
+            medicineContainer.innerHTML = '';
+            
+            // Display each medicine
+            filteredMedicines.forEach(medicine => {
+                const medicineCard = createMedicineCard(medicine);
+                medicineContainer.appendChild(medicineCard);
+            });
+        }
+
+        // Create a medicine card element
+        function createMedicineCard(medicine) {
+            const card = document.createElement('div');
+            card.className = 'medicine-card';
+            
+            // Generate pharmacy badges
+            const pharmacyBadges = medicine.pharmacies.map(pharmacy => 
+                `<span class="pharmacy-badge">${pharmacy}</span>`
+            ).join('');
+            
+            // Generate star rating
+            const stars = generateStarRating(medicine.rating);
+            
+            // Set availability text and color
+            let availabilityText, availabilityClass;
+            if (medicine.availability === 'in-stock') {
+                availabilityText = 'In Stock';
+                availabilityClass = 'in-stock';
+            } else if (medicine.availability === 'limited') {
+                availabilityText = 'Limited Stock';
+                availabilityClass = 'limited-stock';
+            } else {
+                availabilityText = 'Out of Stock';
+                availabilityClass = 'out-of-stock';
+            }
+            
+            card.innerHTML = `
+                <h3 class="medicine-name">${medicine.name}</h3>
+                <p class="medicine-desc">${medicine.description}</p>
+                <div class="medicine-price">₹${medicine.price.toFixed(2)}</div>
+                <div class="medicine-rating">
+                    ${stars}
+                    <span>(${medicine.reviews})</span>
+                </div>
+                <div class="pharmacy-logos">
+                    ${pharmacyBadges}
+                </div>
+                <div class="stock-status ${availabilityClass}">${availabilityText}</div>
+                <button class="btn btn-primary check-availability" data-id="${medicine.id}">
+                    <i class="fas fa-check-circle"></i>
+                    Check Availability
+                </button>
+                <button class="btn btn-secondary add-to-cart" data-id="${medicine.id}">
+                    <i class="fas fa-shopping-cart"></i>
+                    Add to Cart
+                </button>
+            `;
+            
+            // Add event listeners to buttons
+            card.querySelector('.check-availability').addEventListener('click', function() {
+                showAvailabilityModal(medicine);
+            });
+            
+            card.querySelector('.add-to-cart').addEventListener('click', function() {
+                addToCart(medicine);
+            });
+            
+            return card;
+        }
+
+        // Generate star rating HTML
+        function generateStarRating(rating) {
+            let stars = '';
+            const fullStars = Math.floor(rating);
+            const hasHalfStar = rating % 1 >= 0.5;
+            
+            for (let i = 0; i < 5; i++) {
+                if (i < fullStars) {
+                    stars += '<i class="fas fa-star"></i>';
+                } else if (i === fullStars && hasHalfStar) {
+                    stars += '<i class="fas fa-star-half-alt"></i>';
+                } else {
+                    stars += '<i class="far fa-star"></i>';
+                }
+            }
+            
+            return stars;
+        }
+
+        // Display disease trends
+        function displayDiseaseTrends() {
+            diseaseTrendsContainer.innerHTML = '';
+            
+            diseaseTrends.forEach(disease => {
+                const diseaseItem = document.createElement('div');
+                diseaseItem.className = 'disease-item';
+                
+                diseaseItem.innerHTML = `
+                    <div class="disease-info">
+                        <i class="fas fa-virus"></i>
+                        <span>${disease.name}</span>
+                    </div>
+                    <span class="disease-trend ${disease.trend === 'up' ? 'trend-up' : 'trend-down'}">
+                        <i class="fas ${disease.trend === 'up' ? 'fa-arrow-up' : 'fa-arrow-down'}"></i>
+                        ${disease.percentage}%
+                    </span>
+                `;
+                
+                diseaseTrendsContainer.appendChild(diseaseItem);
+            });
+        }
+
+        // Show availability modal
+        function showAvailabilityModal(medicine) {
+            const modal = document.createElement('div');
+            modal.className = 'modal-overlay';
+            
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>${medicine.name} - Availability</h3>
+                        <button class="close-btn">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <p>${medicine.description}</p>
+                        <p><strong>Composition:</strong> ${medicine.composition}</p>
+                        <p><strong>Manufacturer:</strong> ${medicine.manufacturer}</p>
+                        <h4>Available at:</h4>
+                        ${medicine.pharmacies.map(pharmacy => `
+                            <div class="availability-item">
+                                <span>${pharmacy}</span>
+                                <span class="stock-status in-stock">In Stock</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+            
+            // Add close functionality
+            modal.querySelector('.close-btn').addEventListener('click', function() {
+                document.body.removeChild(modal);
+            });
+            
+            // Close modal when clicking outside
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    document.body.removeChild(modal);
+                }
+            });
+            
+            document.body.appendChild(modal);
+        }
+
+        // Add to cart functionality
+        function addToCart(medicine) {
+            // In a real application, this would add to local storage or send to a backend
+            showNotification(`${medicine.name} added to cart!`);
+        }
+
+        // Search medicines
+        function searchMedicines(searchTerm, location) {
+            // Filter medicines by search term
+            const results = medicines.filter(medicine => 
+                medicine.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                medicine.description.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+            
+            // Update category title
+            categoryTitle.textContent = `Search Results for "${searchTerm}"`;
+            
+            // Clear the container
+            medicineContainer.innerHTML = '';
+            
+            if (results.length === 0) {
+                medicineContainer.innerHTML = `
+                    <div style="grid-column: 1 / -1; text-align: center; padding: 40px;">
+                        <i class="fas fa-search" style="font-size: 48px; color: #9E9E9E; margin-bottom: 16px;"></i>
+                        <h3>No medicines found</h3>
+                        <p>Try a different search term or browse by category</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Display search results
+            results.forEach(medicine => {
+                const medicineCard = createMedicineCard(medicine);
+                medicineContainer.appendChild(medicineCard);
+            });
+        }
+
+        // Show notification
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.className = 'error-message';
+            notification.textContent = message;
+            notification.style.background = '#43A047'; // Green for success
+            
+            document.body.appendChild(notification);
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                document.body.removeChild(notification);
+            }, 3000);
+        }
+
+        // Initialize price chart
+        function initializePriceChart() {
+            const ctx = document.getElementById('priceChart').getContext('2d');
+            
+            // Sample data for the chart
+            const data = {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                datasets: [
+                    {
+                        label: 'Dolo 650 Price Trend',
+                        data: [50, 48, 47, 45, 46, 45],
+                        borderColor: '#1E88E5',
+                        backgroundColor: 'rgba(30, 136, 229, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    },
+                    {
+                        label: 'Azithral 500 Price Trend',
+                        data: [130, 125, 122, 120, 121, 120],
+                        borderColor: '#43A047',
+                        backgroundColor: 'rgba(67, 160, 71, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    }
+                ]
+            };
+            
+            const config = {
+                type: 'line',
+                data: data,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Medicine Price Trends (Last 6 Months)'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            title: {
+                                display: true,
+                                text: 'Price (₹)'
+                            }
+                        }
+                    }
+                }
+            };
+            
+            new Chart(ctx, config);
+        }
+
+        // Setup FAQ toggle functionality
+        function setupFAQToggle() {
+            const faqQuestions = document.querySelectorAll('.faq-question');
+            
+            faqQuestions.forEach(question => {
+                question.addEventListener('click', function() {
+                    const faqItem = this.parentElement;
+                    faqItem.classList.toggle('faq-active');
+                });
+            });
+        }
+    </script>
+</body>
+</html>
